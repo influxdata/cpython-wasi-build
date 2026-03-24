@@ -61,7 +61,10 @@ jobs:
             repository: "python/cpython"
             ref: "v${{ env.PYTHON_MAJOR_MINOR }}.${{ inputs.python_micro }}"
         - name: "Build"
-          run: python3 Tools/wasm/wasi.py build
+          run: |
+            export CFLAGS="-fPIC"
+            export CXXFLAGS="-fPIC"
+            python3 Tools/wasm/wasi.py build
         - name: "Create lib directory"
           shell: bash
           run: |
