@@ -105,11 +105,13 @@ jobs:
             popd
         - name: "Create build artifact zip"
           run: |
+            cp -R Include cross-build/${{ env.TARGET_TRIPLE }}/Include
             cp LICENSE cross-build/${{ env.TARGET_TRIPLE }}/
             pushd cross-build/${{ env.TARGET_TRIPLE }}
-            zip ${{ env.BUILD_ARTIFACTS_FILE_NAME }} \
+            zip -r ${{ env.BUILD_ARTIFACTS_FILE_NAME }} \
               LICENSE \
               config.log config.cache Makefile pyconfig.h libpython*.a \
+              Include \
               Modules/Setup.local Modules/Setup.stdlib Modules/config.c \
               Modules/_decimal/libmpdec/libmpdec.a \
               Modules/_hacl/*.a \
