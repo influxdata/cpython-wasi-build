@@ -66,6 +66,28 @@ jobs:
             export CFLAGS="-fPIC"
             export CXXFLAGS="-fPIC"
             python3 Tools/wasm/wasi.py build
+        - name: "Link shared lib"
+          run: |
+            pushd cross-build/${{ env.TARGET_TRIPLE }}
+            ${{ env.WASI_SDK_PATH }}/bin/clang \
+              --target=wasm32-wasip2 \
+              -shared \
+              -o libpython${{ env.PYTHON_MAJOR_MINOR }}.so \
+              -Wl,--whole-archive \
+              libpython${{ env.PYTHON_MAJOR_MINOR }}.a \
+              -Wl,--no-whole-archive \
+              Modules/_hacl/libHacl_HMAC.a \
+              Modules/_hacl/libHacl_Hash_BLAKE2.a \
+              Modules/_hacl/libHacl_Hash_MD5.a \
+              Modules/_hacl/libHacl_Hash_SHA1.a \
+              Modules/_hacl/libHacl_Hash_SHA2.a \
+              Modules/_hacl/libHacl_Hash_SHA3.a \
+              Modules/_decimal/libmpdec/libmpdec.a \
+              Modules/expat/libexpat.a \
+              -lwasi-emulated-signal \
+              -lwasi-emulated-getpid \
+              -lwasi-emulated-process-clocks \
+              -ldl
         - name: "Create lib directory"
           shell: bash
           run: |
@@ -111,7 +133,7 @@ jobs:
             pushd cross-build/${{ env.TARGET_TRIPLE }}
             zip -r ${{ env.BUILD_ARTIFACTS_FILE_NAME }} \
               LICENSE \
-              config.log config.cache Makefile pyconfig.h libpython*.a \
+              config.log config.cache Makefile pyconfig.h libpython*.a libpython*.so \
               Include \
               Modules/Setup.local Modules/Setup.stdlib Modules/config.c \
               Modules/_decimal/libmpdec/libmpdec.a \
