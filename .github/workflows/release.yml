@@ -5,6 +5,7 @@ env:
   WASI_SDK_VERSION: "24"
   PYTHON_MAJOR_MINOR: "3.14"
   TARGET_TRIPLE: "wasm32-wasip1"
+  GEN: "2"
 
 on:
     workflow_dispatch:
@@ -23,7 +24,7 @@ jobs:
       steps:
         - name: "Create draft release"
           run: |
-            gh release create v${{ env.PYTHON_MAJOR_MINOR }}.${{ inputs.python_micro }} --title "CPython ${{ env.PYTHON_MAJOR_MINOR }}.${{ inputs.python_micro}} w/ WASI SDK ${{ env.WASI_SDK_VERSION }}" --repo "influxdata/cpython-wasi-build" --draft
+            gh release create v${{ env.PYTHON_MAJOR_MINOR }}.${{ inputs.python_micro }}-g${{ inputs.python_micro }} --title "CPython ${{ env.PYTHON_MAJOR_MINOR }}.${{ inputs.python_micro}} w/ WASI SDK ${{ env.WASI_SDK_VERSION }} Gen ${{ env.GEN }}" --repo "influxdata/cpython-wasi-build" --draft
           env:
             GH_TOKEN: ${{ github.token }}
 
@@ -120,6 +121,6 @@ jobs:
             popd
         - name: "Attach files to the release"
           run: |
-            gh release upload v${{ env.PYTHON_MAJOR_MINOR }}.${{ inputs.python_micro }} ${{ env.ZIP_DIR }}/${{ env.EXECUTABLE_FILE_NAME }} cross-build/${{ env.TARGET_TRIPLE }}/${{ env.BUILD_ARTIFACTS_FILE_NAME }} --repo "influxdata/cpython-wasi-build"
+            gh release upload v${{ env.PYTHON_MAJOR_MINOR }}.${{ inputs.python_micro }}-g${{ inputs.python_micro }} ${{ env.ZIP_DIR }}/${{ env.EXECUTABLE_FILE_NAME }} cross-build/${{ env.TARGET_TRIPLE }}/${{ env.BUILD_ARTIFACTS_FILE_NAME }} --repo "influxdata/cpython-wasi-build"
           env:
             GH_TOKEN: ${{ github.token }}
